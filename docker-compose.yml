@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+
+  acceptor-1:
+    container_name: acceptor-1
+    image: da1-java
+    environment:
+      APP_ROLE: acceptor
+      ID: 1
+
+  proposer-1:
+    container_name: proposer-1
+    image: da1-java
+    environment:
+      APP_ROLE: proposer
+      ID: 2
