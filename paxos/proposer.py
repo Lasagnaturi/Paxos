@@ -24,7 +24,7 @@ class Proposer():
         module = __import__("proposer")
         cls = getattr(module, "Proposer")
         phase = getattr(cls, phase)
-        return phase, par1, par2, par3
+        return phase, int(par1), int(par2), int(par3)
 
     def phase1b(par1, par2=None, par3=None):
         rnd = par1
@@ -52,7 +52,7 @@ class Proposer():
 
 
     def proposer(config, id):
-        print('-> Proposer', id)
+        pricnt('-> Proposer', id)
         # Setting up communication and class variables.
         Proposer.config = config
         Proposer.id = id

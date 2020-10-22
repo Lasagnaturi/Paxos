@@ -21,10 +21,10 @@ class Acceptor():
     module = __import__("acceptor")
     cls = getattr(module, "Acceptor")
     phase = getattr(cls, phase)
-    return phase, par1, par2
+    return phase, int(par1), int(par2)
 
   def phase1a(par1, par2=None):
-    c_rnd = int(par1)
+    c_rnd = par1
     print("phase1a, ho ricevuto una proposta con c-rnd: ", c_rnd)
     if (c_rnd > Acceptor.rnd):
       Acceptor.rnd = c_rnd
