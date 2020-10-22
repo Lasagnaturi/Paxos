@@ -1,7 +1,0 @@
-docker-compose up __ to run all the containers specified in the docker-compose.yml
-docker-compose down __ to stop and remove all the containers
-
-docker build --tag [image name] . __ to build the image from docker file in the . folder with the specified Name
-docker images __ to check the existing images
-
-docker cont ls -a OR docker ps -a __ to show all the containers (active and not)
