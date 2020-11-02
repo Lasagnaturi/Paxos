@@ -4,7 +4,7 @@ import socket
 import struct
 from proposer import Proposer
 from client import client
-from learner import learner
+from learner import Learner
 from acceptor import Acceptor
 from connection import mcast_receiver, mcast_sender
 
@@ -30,7 +30,7 @@ if __name__ == '__main__':
   elif role == 'proposer':
     rolefunc = Proposer.proposer
   elif role == 'learner':
-    rolefunc = learner
+    rolefunc = Learner.learner
   elif role == 'client':
     rolefunc = client
   rolefunc(config, id)

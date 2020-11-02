@@ -7,28 +7,14 @@ def client(config, id):
 
 
   print ('-> client ', id)
-  s = mcast_sender()
-  #
-  # f = open("../values.txt", "r")
-  # values = []
-  #
-  # while (True):
-  #   value = f.readline()
-  #   if (value == ""):
-  #     break
-  #   values.append(value)
-  #
-  # for value in values:
-  #   value = value.strip()
-  #   print ("client: sending %s to proposers" % (value))
-  #   s.sendto(value, config['proposers'])
-  # print ('client done.')
+
 
   s = mcast_sender()
   for value in sys.stdin:
     value = value.strip()
-    print ("client: sending ", value, " to proposers")
+    print ("client",id, ": sending ", value, " to proposers")
     value = "submit " + value + " " + str(id)+ " None"
     s.sendto(value.encode(), config['proposers'])
-  s.sendto("startPaxos None None None".encode(), config['proposers'])
-  print ('client done.')
+  print("Client id: ", id ,", I'm asking to the proposers to start the battle.")
+  s.sendto("startPaxos None None None".encode(), config["proposers"])
+  print ("Client ",id," my job is done.")

@@ -21,24 +21,26 @@ class Acceptor():
     module = __import__("acceptor")
     cls = getattr(module, "Acceptor")
     phase = getattr(cls, phase)
-    return phase, int(par1), int(par2)
+    return phase, par1, par2
 
   def phase1a(par1, par2=None):
     # IN THE SLIDES THIS IS THE PHASE 1B
-    c_rnd = par1
-    print("phase1a, ho ricevuto una proposta con c-rnd: ", c_rnd)
+    c_rnd = int(par1)
+    print("Acceptor id", Acceptor.id ,": phase1a, I received a proposal with c-rnd: ", c_rnd)
     if (c_rnd > Acceptor.rnd):
+      print("Acceptor id", Acceptor.id, ": I accept the proposal with c-rnd: ", c_rnd)
+
       Acceptor.rnd = c_rnd
       msg = "phase1b " + str(Acceptor.rnd) + " " + str(Acceptor.v_rnd) + " " + str(Acceptor.v_val)
       Acceptor.s.sendto(msg.encode(), Acceptor.config['proposers'])
-      # else The acceptor ignore the request
+    # else The acceptor ignore the request
 
   def phase2a(par1, par2=None):
     # IN THE SLIDES THIS IS THE PHASE 2B
-    c_rnd = par1
-    c_val = par2
+    c_rnd = int(par1)
+    c_val = int(par2)
 
-    if(c_rnd >= rnd):
+    if(c_rnd >= Acceptor.rnd):
       Acceptor.v_rnd = c_rnd
       Acceptor.v_val = c_val
       msg = "phase2b " + str(Acceptor.v_rnd)+ " " + str(Acceptor.v_val) + " None"
