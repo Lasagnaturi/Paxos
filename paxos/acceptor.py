@@ -12,42 +12,48 @@ class Acceptor():
   s = None
 
   # Paxos variables
-  rnd = 0
-  v_rnd = 0
-  v_val = None
+  instances = {}
+
 
   def parse_msg(msg):
-    phase, par1, par2 = msg.decode().split()
+    phase, par1, par2, instance = msg.decode().split()
     module = __import__("acceptor")
     cls = getattr(module, "Acceptor")
     phase = getattr(cls, phase)
-    return phase, par1, par2
+    return phase, par1, par2, instance
 
-  def phase1a(par1, par2=None):
+  def phase1a(par1, par2=None, instance=None):
     # IN THE SLIDES THIS IS THE PHASE 1B
     c_rnd = int(par1)
     print("Acceptor id", Acceptor.id ,": phase1a, I received a proposal with c-rnd: ", c_rnd)
-    if (c_rnd > Acceptor.rnd):
+    if (c_rnd > Acceptor.instances[instance]['rnd']):
       print("Acceptor id", Acceptor.id, ": I accept the proposal with c-rnd: ", c_rnd)
 
-      Acceptor.rnd = c_rnd
-      msg = "phase1b " + str(Acceptor.rnd) + " " + str(Acceptor.v_rnd) + " " + str(Acceptor.v_val)
+      Acceptor.instances[instance]['rnd'] = c_rnd
+      msg = "phase1b " + str(Acceptor.instances[instance]['rnd']) + " " + str(Acceptor.instances[instance]['v_rnd']) + " " + str(Acceptor.instances[instance]['v_val'])
       Acceptor.s.sendto(msg.encode(), Acceptor.config['proposers'])
     # else The acceptor ignore the request
 
-  def phase2a(par1, par2=None):
+  def phase2a(par1, par2=None, instance=None):
     # IN THE SLIDES THIS IS THE PHASE 2B
     c_rnd = int(par1)
     c_val = int(par2)
 
-    if(c_rnd >= Acceptor.rnd):
-      Acceptor.v_rnd = c_rnd
-      Acceptor.v_val = c_val
-      msg = "phase2b " + str(Acceptor.v_rnd)+ " " + str(Acceptor.v_val) + " None"
+    if(c_rnd >= Acceptor.instances[instance]['rnd']):
+      Acceptor.instances[instance]['v_rnd'] = c_rnd
+      Acceptor.instances[instance]['v_val'] = c_val
+      msg = "phase2b " + str(Acceptor.instances[instance]['v_rnd'])+ " " + str(Acceptor.instances[instance]['v_val']) + " None"
       Acceptor.s.sendto(msg.encode(), Acceptor.config['proposers'])
 
-  def decision(par1, par2=None):
+  def decision(par1, par2=None, instance=None):
     print ("decision")
+
+  def newStackOfVariables(instance):
+    rnd = 0
+    v_rnd = 0
+    v_val = None
+    variables = {'rnd':rnd, 'v_rnd':v_rnd, 'v_val':v_val}
+    Acceptor.instances[instance] = variables
 
   # Setting up communication and class variables.
   def acceptor(config, id):
@@ -67,5 +73,7 @@ class Acceptor():
       except socket.timeout:
         print ("Proposed id", id, ": OPS! Timeout exception")
         break
-      phase, par1, par2 = Acceptor.parse_msg(msg)
-      phase(par1, par2)
+      phase, par1, par2, instance = Acceptor.parse_msg(msg)
+      if not instance in Acceptor.instances:
+        Acceptor.newStackOfVariables(instance)
+      phase(par1, par2, instance)
