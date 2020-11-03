@@ -29,7 +29,7 @@ class Learner():
       # print("Learner id:", Learner.id," decided value: ", value)
 
   def learner(config, id):
-    print('-> learner', id)
+    # print('-> learner', id)
     Learner.config = config
     Learner.id = id
     Learner.r = mcast_receiver(config['learners'])
@@ -37,11 +37,12 @@ class Learner():
     Learner.s = mcast_sender()
 
     while True:
-      try:
+      # try:
         # print("uagliò sto aspettando la decisione")
-        msg = Learner.r.recv(2**16)
-      except socket.timeout:
-        print ("Learner id", id, ": OPS! Timeout exception")
+      msg = Learner.r.recv(2**16)
+
+      # except socket.timeout:
+        # print ("Learner id", id, ": OPS! Timeout exception")
         # break
       phase, par1 = Learner.parse_msg(msg)
       phase(par1)

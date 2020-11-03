@@ -36,15 +36,12 @@ class Proposer():
             v_val = int(par3)
         except ValueError:
             v_val = None
-        print('PRIMO')
         if(Proposer.instances[instance]['c_rnd'] == rnd):
             Proposer.instances[instance]['V'][v_rnd] = v_val
             Proposer.instances[instance]['Qa'] += 1
         else:
             print("Be careful, c_rnd = ", Proposer.instances[instance]['c_rnd']," and v_rnd = ", v_rnd)
-        print('SECONDO')
         if(Proposer.instances[instance]['Qa']>1 and Proposer.instances[instance]['state2A']):
-            print('TERZO')
             print("Proposer id ",Proposer.id, " instance : ",instance," I received the quorum")
             k = max(Proposer.instances[instance]['V'].keys())
 
@@ -56,7 +53,6 @@ class Proposer():
             msg = "phase2a " + str(Proposer.instances[instance]['c_rnd']) + " " + str(Proposer.instances[instance]['c_val']) + " " + str(instance)
             Proposer.s.sendto(msg.encode(), Proposer.config['acceptors'])
             Proposer.instances[instance]['state2A'] = False
-        print('QUARTO')
 
 
     def phase2b(par1, par2, par3=None, instance=None):
@@ -103,7 +99,6 @@ class Proposer():
 
         # if Proposer.max_instance > 0:
         Proposer.max_instance += 1
-        print("MAX INSTANCE : ", Proposer.max_instance)
         variables = {'c_val':c_val, 'c_rnd': c_rnd, 'Qa':Qa, 'V':V, 'paxosStarted':paxosStarted,'state2A':state2A, 'Qa3':Qa3, 'received3':received3, 'isComplete':isComplete}
         Proposer.instances[Proposer.max_instance] = variables
         return Proposer.max_instance
@@ -122,7 +117,6 @@ class Proposer():
             Proposer.instances[instance]['paxosStarted'] = True
             Proposer.instances[instance]['c_rnd'] += 1
             msg = "phase1a " + str(Proposer.instances[instance]['c_rnd']) + " None " + str(instance)
-            print(msg)
             Proposer.s.sendto(msg.encode(), Proposer.config['acceptors'])
 
 
