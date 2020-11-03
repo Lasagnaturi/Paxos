@@ -32,8 +32,8 @@ echo "starting acceptors..."
 sleep 1
 echo "starting learners..."
 
-./learner.sh 1 $conf & #> ../learn1 &
-./learner.sh 2 $conf & #> ../learn2 &
+./learner.sh 1 $conf > ../learn1 &
+./learner.sh 2 $conf > ../learn2 &
 
 sleep 1
 echo "starting proposers..."
@@ -42,13 +42,13 @@ echo "starting proposers..."
 ./proposer.sh 2 $conf &
 
 echo "waiting to start clients"
-sleep 10
+sleep 2
 echo "starting clients..."
 
 ./client.sh 1 $conf < ../prop1 &
 ./client.sh 2 $conf < ../prop2 &
 
-sleep 5
+sleep 50
 
 $KILLCMD
 wait

@@ -25,12 +25,12 @@ class Acceptor():
   def phase1a(par1, par2=None, instance=None):
     # IN THE SLIDES THIS IS THE PHASE 1B
     c_rnd = int(par1)
-    print("Acceptor id", Acceptor.id ,": phase1a, I received a proposal with c-rnd: ", c_rnd)
+    print("Acceptor id", Acceptor.id ,": istance ",instance," phase1a, I received a proposal with c-rnd: ", c_rnd)
     if (c_rnd > Acceptor.instances[instance]['rnd']):
-      print("Acceptor id", Acceptor.id, ": I accept the proposal with c-rnd: ", c_rnd)
+      print("Acceptor id", Acceptor.id, ": istance ",instance," phase1a I accept the proposal with c-rnd: ", c_rnd)
 
       Acceptor.instances[instance]['rnd'] = c_rnd
-      msg = "phase1b " + str(Acceptor.instances[instance]['rnd']) + " " + str(Acceptor.instances[instance]['v_rnd']) + " " + str(Acceptor.instances[instance]['v_val'])
+      msg = "phase1b " + str(Acceptor.instances[instance]['rnd']) + " " + str(Acceptor.instances[instance]['v_rnd']) + " " + str(Acceptor.instances[instance]['v_val']) + " " + str(instance)
       Acceptor.s.sendto(msg.encode(), Acceptor.config['proposers'])
     # else The acceptor ignore the request
 
@@ -42,7 +42,7 @@ class Acceptor():
     if(c_rnd >= Acceptor.instances[instance]['rnd']):
       Acceptor.instances[instance]['v_rnd'] = c_rnd
       Acceptor.instances[instance]['v_val'] = c_val
-      msg = "phase2b " + str(Acceptor.instances[instance]['v_rnd'])+ " " + str(Acceptor.instances[instance]['v_val']) + " None"
+      msg = "phase2b " + str(Acceptor.instances[instance]['v_rnd'])+ " " + str(Acceptor.instances[instance]['v_val']) + " None " + str(instance)
       Acceptor.s.sendto(msg.encode(), Acceptor.config['proposers'])
 
   def decision(par1, par2=None, instance=None):
@@ -61,7 +61,7 @@ class Acceptor():
     Acceptor.config = config
     Acceptor.id = id
     Acceptor.r = mcast_receiver(config['acceptors'])
-    Acceptor.r.settimeout(15)
+    # Acceptor.r.settimeout(15)
     Acceptor.s = mcast_sender()
 
     state = {}
@@ -71,8 +71,8 @@ class Acceptor():
       try:
         msg = Acceptor.r.recv(2**16)
       except socket.timeout:
-        print ("Proposed id", id, ": OPS! Timeout exception")
-        break
+        print ("Acceptor id", id, ": OPS! Timeout exception")
+        # break
       phase, par1, par2, instance = Acceptor.parse_msg(msg)
       if not instance in Acceptor.instances:
         Acceptor.newStackOfVariables(instance)
