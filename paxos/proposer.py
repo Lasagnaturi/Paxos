@@ -143,9 +143,14 @@ class Proposer():
                             if not Proposer.instances[instance]['isComplete']:
                                 Proposer.instances[instance]['paxosStarted'] = False
                                 Proposer.startPaxos(instance)
+                            elif(Proposer.values.qsize()>0):
+                                startPaxos(instance=newStackOfVariables())
                         else:
-                            print("Proposer ", id, " sorry, I haven't received values from the client, I'll try again in 10 seconds.")
-                            time.sleep(10)
+                            if(Proposer.values.qsize()>0):
+                                Proposer.startPaxos(instance='None')
+                            else:
+                                print("Proposer ", id, " sorry, I haven't received values from the client, I'll try again in 10 seconds.")
+                                time.sleep(10)
                         # print ("Proposer id", id,": OPS! Timeout exception")
                         # break
                 phase, par1, par2, par3, instance = Proposer.parse_msg(msg)
