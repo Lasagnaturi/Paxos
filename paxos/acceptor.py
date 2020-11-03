@@ -25,9 +25,9 @@ class Acceptor():
   def phase1a(par1, par2=None, instance=None):
     # IN THE SLIDES THIS IS THE PHASE 1B
     c_rnd = int(par1)
-    print("Acceptor id", Acceptor.id ,": istance ",instance," phase1a, I received a proposal with c-rnd: ", c_rnd)
+    print("Acceptor id", Acceptor.id ,": instance ",instance," phase1a, I received a proposal with c-rnd: ", c_rnd)
     if (c_rnd > Acceptor.instances[instance]['rnd']):
-      print("Acceptor id", Acceptor.id, ": istance ",instance," phase1a I accept the proposal with c-rnd: ", c_rnd)
+      print("Acceptor id", Acceptor.id, ": instance ",instance," phase1a I accept the proposal with c-rnd: ", c_rnd)
 
       Acceptor.instances[instance]['rnd'] = c_rnd
       msg = "phase1b " + str(Acceptor.instances[instance]['rnd']) + " " + str(Acceptor.instances[instance]['v_rnd']) + " " + str(Acceptor.instances[instance]['v_val']) + " " + str(instance)

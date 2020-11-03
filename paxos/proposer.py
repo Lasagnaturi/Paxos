@@ -70,7 +70,7 @@ class Proposer():
         if(Proposer.instances[instance]['Qa3'] > 1 and not Proposer.instances[instance]['isComplete'] and Proposer.instances[instance]['Qa3'] == Proposer.instances[instance]['received3']):
             msg = "decision " + str(v_val)
             Proposer.s.sendto(msg.encode(), Proposer.config['learners'])
-            print ("Proposer id: ",Proposer.id, " istance ", instance, " decided value: ", v_val)
+            print ("Proposer id: ",Proposer.id, " Proposer ", instance, " decided value: ", v_val)
             Proposer.state.append(v_val)
             Proposer.instances[instance]['isComplete'] = True
             # Since the value has been accepted, I start a new instance with the next value to be proposed
