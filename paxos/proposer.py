@@ -68,14 +68,13 @@ class Proposer():
             Proposer.instances[instance]['received3'] += 1
 
         if(Proposer.instances[instance]['Qa3'] > 1 and not Proposer.instances[instance]['isComplete'] and Proposer.instances[instance]['Qa3'] == Proposer.instances[instance]['received3']):
-            msg = "decision " + str(v_val)
+            msg = "decision " + str(v_val) + " " + str(instance)
             Proposer.s.sendto(msg.encode(), Proposer.config['learners'])
             print ("Proposer id: ",Proposer.id, " istance ", instance, " decided value: ", v_val)
-            Proposer.state.append(v_val)
+            Proposer.state.append((v_val,instance))
             Proposer.instances[instance]['isComplete'] = True
             # Since the value has been accepted, I start a new instance with the next value to be proposed
             Proposer.startPaxos(instance='None')
-
 
 
     def submit(par1, par2, par3=None, instance=None):
@@ -119,6 +118,17 @@ class Proposer():
             msg = "phase1a " + str(Proposer.instances[instance]['c_rnd']) + " None " + str(instance)
             Proposer.s.sendto(msg.encode(), Proposer.config['acceptors'])
 
+    def getOlderValue(par1=None, par2=None, par3=None, instance="None"):
+        inst = int(par1)
+        val = None
+        for k in Proposer.state:
+            if(k[1] == inst):
+                val = k[0]
+                break
+
+        msg = "decision " + str(val) + " " + str(inst)
+        Proposer.s.sendto(msg.encode(), Proposer.config['learners'])
+
 
     def proposer(config, id):
         print('-> Proposer', id)
@@ -145,6 +155,7 @@ class Proposer():
                                 Proposer.startPaxos(instance)
                             elif(Proposer.values.qsize()>0):
                                 startPaxos(instance=newStackOfVariables())
+                        # if every instance is complete, let's check if there are pending value, if yes let's start another instance, if no sleep
                         else:
                             if(Proposer.values.qsize()>0):
                                 Proposer.startPaxos(instance='None')
