@@ -40,6 +40,7 @@ class Acceptor():
     c_val = int(par2)
 
     if(c_rnd >= Acceptor.instances[instance]['rnd']):
+      print("Acceptor id", Acceptor.id ,": instance ",instance," phase2a, sto per confermare ")
       Acceptor.instances[instance]['v_rnd'] = c_rnd
       Acceptor.instances[instance]['v_val'] = c_val
       msg = "phase2b " + str(Acceptor.instances[instance]['v_rnd'])+ " " + str(Acceptor.instances[instance]['v_val']) + " None " + str(instance)

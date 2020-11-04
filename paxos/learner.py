@@ -68,7 +68,7 @@ class Learner():
         Learner.temp_instances.remove(temp_inst)
         Learner.temp_values.remove(val)
         Learner.store(val, temp_inst)
-        temp += 1
+        temp_inst += 1
     #else:
       #print("posso tornare senza fare nulla")
     # #print("Learner id:", Learner.id," decided value: ", value)
