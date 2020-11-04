@@ -46,16 +46,12 @@ class Proposer():
         if(Proposer.instances[instance]['Qa']>1 and Proposer.instances[instance]['state2A']):
             print("Proposer id ",Proposer.id, " instance : ",instance," I received the quorum")
             k = max(Proposer.instances[instance]['V'].keys())
-            print("baiocchi ", instance, " k = ",k)
             if (k == 0):
-                print("cerco un valore nella queue ",instance)
 
                 Proposer.instances[instance]['c_val'] = Proposer.values[0]
-                print("trovo ", instance," il valore", Proposer.instances[instance]['c_val'])
-                #.get(timeout=2)
+
                 Proposer.values = Proposer.values[1:len(Proposer.values)]
-                print("ottengo un valore dalla queue ")
-                # Proposer.numberofvalues-=1
+
             else:
                 Proposer.instances[instance]['c_val'] = Proposer.instances[instance]['V'][k]
 
@@ -79,7 +75,6 @@ class Proposer():
 
         if(v_rnd == Proposer.instances[instance]['c_rnd']):
             Proposer.instances[instance]['received3'] += 1
-        print("mpa", v_val, " CONDIZIONE2", Proposer.instances[instance]['Qa3'] > 1 and not Proposer.instances[instance]['isComplete'] and Proposer.instances[instance]['Qa3'] == Proposer.instances[instance]['received3'])
         if(Proposer.instances[instance]['Qa3'] > 1 and not Proposer.instances[instance]['isComplete'] and Proposer.instances[instance]['Qa3'] == Proposer.instances[instance]['received3']):
             
             print ("Proposer id: ",Proposer.id, " instance ", instance, " decided value: ", v_val)
@@ -87,14 +82,10 @@ class Proposer():
             Proposer.instances[instance]['isComplete'] = True
 
             msg = "decision " + str(v_val) + " " + str(instance)
-            print( "aioo", str(v_val), " ", msg) 
-            # print("fase 3 ",msg)
             Proposer.s.sendto(msg.encode(), Proposer.config['learners'])
             # Since the value has been accepted, I start a new instance with the next value to be proposed
            
             Proposer.startPaxos(instance='None')
-
-        print("finito fase 3 ")
 
 
     def submit(par1, par2, par3=None, instance=None):
@@ -127,8 +118,6 @@ class Proposer():
 
     chiamate_paxos = 0
     def startPaxos(par1=None, par2=None, par3=None, instance="None"):
-        # print("ATTENZIONE START PAXOS CHIAMATO")
-        print("instance ", instance)
         # IN THE SLIDES THIS IS THE PHASE 1A
 
         # if there are value to be proposed I initialize a new instance, if it is not passed as argument.
@@ -137,12 +126,9 @@ class Proposer():
             if(Proposer.numberofvalues == 0):
                 return
             Proposer.chiamate_paxos+=1  
-            print('CHIAMATAAA', Proposer.chiamate_paxos, "con instance", instance, "e lenght di values", len(Proposer.values), "e number of values ", Proposer.numberofvalues)
             instance = Proposer.newStackOfVariables()
 
-        # if the instance is passed as argument, i'll start a new round, otherwise I start the new one created above
-        # print("condition ", not Proposer.instances[instance]['paxosStarted'])
-        # print("paxos starte" ,Proposer.instances[instance]['paxosStarted'])
+
         if(not Proposer.instances[instance]['paxosStarted']):
             Proposer.instances[instance]['paxosStarted'] = True
             Proposer.instances[instance]['c_rnd'] += 1
@@ -159,9 +145,6 @@ class Proposer():
                 break
 
         msg = "decision " + str(val) + " " + str(inst)
-        if(str(val) == 'None'):
-            print("get_older con instanza ",inst)
-            print(Proposer.state)
         Proposer.s.sendto(msg.encode(), Proposer.config['learners'])
 
 
@@ -182,12 +165,9 @@ class Proposer():
         while True:
             while True:
                 try:
-                    # print("proposer aspetto un messaggio")
                     msg = Proposer.r.recv(2 ** 16)
-                    # print("ricevuto")
                     break
                 except socket.timeout:
-                    # print("nessun messaggio ricevuto")
 
                     if(len(Proposer.instances.keys()) != 0):
                         instance = max(Proposer.instances.keys())
@@ -207,10 +187,8 @@ class Proposer():
                     else:
 
                         if(len(Proposer.values)>0):
-                            # print('aoo')
                             Proposer.startPaxos(instance='None')
                         else:
-                            # print('aiii')
                             print("Proposer ", id, " sorry, I haven't received values from the client, I'll try again in 5 seconds.")
                             time.sleep(5)
 

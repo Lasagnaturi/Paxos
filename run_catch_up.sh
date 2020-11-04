@@ -50,7 +50,7 @@ sleep 1
 echo "starting client 2..."
 ./client.sh 2 $conf < ../prop2 &
 
-sleep 25
+sleep 50
 
 $KILLCMD
 wait
