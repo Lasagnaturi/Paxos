@@ -15,7 +15,7 @@ class Learner():
   s = None
 
   values = []
-  instance = []
+  instances = []
 
   temp_values = []
   temp_instances = []
@@ -28,30 +28,37 @@ class Learner():
     return phase, par1, par2
 
   def catch_up(value, instance):
-    if instance > 0 and instance-1 not in Learner.instance:
+    print("catch up chiamato ")
+    #print("value", value, "instance", instance)
+    if instance > 0 and instance-1 not in Learner.instances:
       msg = "getOlderValue " + str(instance-1) + " None None None"
       Learner.s.sendto(msg.encode(), Learner.config['proposers'])
+      #print("ritorno false")
       return False
+    #print("ritorno true")
     return True
 
   def store(value, instance):
+    #print("ATTENZIONEEE ENTRO IN STORE")
     if(instance not in Learner.instances):
       Learner.values.append(value)
-      Learner.instance.append(instance)
+      Learner.instances.append(instance)
       print(value)
       sys.stdout.flush()
 
 
   def decision(par1, par2):
+    #print("decision chiamato ")
     value = int(par1)
     instance = int(par2)
-
+    #print("lenght ", len(Learner.values))
     if (not Learner.catch_up(value, instance)):
+      #print("catch up necessario ")
       Learner.temp_values.append(value)
       Learner.temp_instances.append(instance)
 
-    elif(len(Learner.values) == 0 | value != Learner.values[-1]):
-      
+    elif(len(Learner.values) == 0 or value != Learner.values[-1]):
+      #print("non serve il catch")
       Learner.store(value, instance)
 
       temp_inst = instance+1
@@ -62,10 +69,12 @@ class Learner():
         Learner.temp_values.remove(val)
         Learner.store(val, inst)
         temp += 1
-      # print("Learner id:", Learner.id," decided value: ", value)
+    #else:
+      #print("posso tornare senza fare nulla")
+    # #print("Learner id:", Learner.id," decided value: ", value)
 
   def learner(config, id):
-    # print('-> learner', id)
+    #print('-> learner', id)
     Learner.config = config
     Learner.id = id
     Learner.r = mcast_receiver(config['learners'])
@@ -75,11 +84,11 @@ class Learner():
 
     while True:
       # try:
-        # print("uagliò sto aspettando la decisione")
+        # #print("uagliò sto aspettando la decisione")
       msg = Learner.r.recv(2**16)
-
+      # #print("ricevuto un un messaggiooo")
       # except socket.timeout:
-        # print ("Learner id", id, ": OPS! Timeout exception")
+        # #print ("Learner id", id, ": OPS! Timeout exception")
         # break
       phase, par1, par2 = Learner.parse_msg(msg)
       phase(par1, par2)

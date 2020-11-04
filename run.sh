@@ -20,6 +20,8 @@ echo
 
 cd $projdir
 
+
+
 ../generate.sh $n > ../prop1
 ../generate.sh $n > ../prop2
 
@@ -48,7 +50,7 @@ echo "starting clients..."
 ./client.sh 1 $conf < ../prop1 &
 ./client.sh 2 $conf < ../prop2 &
 
-sleep 25
+sleep 15
 
 $KILLCMD
 wait

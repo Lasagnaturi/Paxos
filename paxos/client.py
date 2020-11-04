@@ -15,6 +15,7 @@ def client(config, id):
   for value in sys.stdin:
     if (i%100 == 0):
       if(id == 1):
+        print("IDDDDD ", i)
         s.sendto("startPaxos None None None None".encode(), config["proposers"])
       time.sleep(0.5)
     print("Client id: ", id ,", I'm asking to the proposers to start the battle.")

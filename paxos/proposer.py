@@ -104,7 +104,8 @@ class Proposer():
         return Proposer.max_instance
 
     def startPaxos(par1=None, par2=None, par3=None, instance="None"):
-
+        # print("ATTENZIONE START PAXOS CHIAMATO")
+        # print("instance ", instance)
         # IN THE SLIDES THIS IS THE PHASE 1A
 
         # if there are value to be proposed I initialize a new instance, if it is not passed as argument.
@@ -113,11 +114,14 @@ class Proposer():
                 return
             instance = Proposer.newStackOfVariables()
         # if the instance is passed as argument, i'll start a new round, otherwise I start the new one created above
+        # print("condition ", not Proposer.instances[instance]['paxosStarted'])
+        # print("paxos starte" ,Proposer.instances[instance]['paxosStarted'])
         if(not Proposer.instances[instance]['paxosStarted']):
             Proposer.instances[instance]['paxosStarted'] = True
             Proposer.instances[instance]['c_rnd'] += 1
             msg = "phase1a " + str(Proposer.instances[instance]['c_rnd']) + " None " + str(instance)
             Proposer.s.sendto(msg.encode(), Proposer.config['acceptors'])
+
 
     def getOlderValue(par1=None, par2=None, par3=None, instance="None"):
         inst = int(par1)
@@ -137,9 +141,8 @@ class Proposer():
         Proposer.config = config
         Proposer.id = id
         Proposer.r = mcast_receiver(config['proposers'])
-        Proposer.r.settimeout(15)
+        Proposer.r.settimeout(5)
         Proposer.s = mcast_sender()
-        instance = 0
         if(id == 1):
             print("Proposer ", id, " hey, I'm the leader")
             while True:
@@ -148,21 +151,38 @@ class Proposer():
                         msg = Proposer.r.recv(2 ** 16)
                         break
                     except socket.timeout:
-                        print()
+                        if(len(Proposer.instances.keys())!=0):
+                            instance = max(Proposer.instances.keys())
+                        else:
+                            instance = -1
+                        # print("WEEEE", instance in Proposer.instances.keys())
+                        # print("instance ", instance)
+                        # print("lista", Proposer.instances.keys())
+                        # print("dizio ",Proposer.instances)
                         # if the waiting is too long, let's start a new round.
-                        if (instance in Proposer.instances):
+                        if (instance in Proposer.instances.keys()):
                             if not Proposer.instances[instance]['isComplete']:
+
                                 Proposer.instances[instance]['paxosStarted'] = False
-                                Proposer.startPaxos(instance)
+                                Proposer.instances[instance]['Qa'] = 0
+                                Proposer.instances[instance]['Qa3'] = 0
+                                Proposer.instances[instance]['received3'] = 0
+                                Proposer.instances[instance]['V'] = {}
+                                Proposer.instances[instance]['state2A'] = True
+                                # print("MBAREEEE")
+                                Proposer.startPaxos(instance=instance)
                             elif(Proposer.values.qsize()>0):
-                                startPaxos(instance=newStackOfVariables())
+                                Proposer.startPaxos(instance=Proposer.newStackOfVariables())
                         # if every instance is complete, let's check if there are pending value, if yes let's start another instance, if no sleep
                         else:
+                            print("ATTENZIONE DOVREI ")
                             if(Proposer.values.qsize()>0):
+                                print('aoo')
                                 Proposer.startPaxos(instance='None')
                             else:
-                                print("Proposer ", id, " sorry, I haven't received values from the client, I'll try again in 10 seconds.")
-                                time.sleep(10)
+                                print('aiii')
+                                print("Proposer ", id, " sorry, I haven't received values from the client, I'll try again in 5 seconds.")
+                                time.sleep(5)
                         # print ("Proposer id", id,": OPS! Timeout exception")
                         # break
                 phase, par1, par2, par3, instance = Proposer.parse_msg(msg)
