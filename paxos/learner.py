@@ -28,7 +28,7 @@ class Learner():
     return phase, par1, par2
 
   def catch_up(value, instance):
-    print("catch up chiamato ")
+    # print("catch up chiamato ")
     #print("value", value, "instance", instance)
     if instance > 0 and instance-1 not in Learner.instances:
       msg = "getOlderValue " + str(instance-1) + " None None None"
@@ -67,7 +67,7 @@ class Learner():
         val = Learner.temp_values[index]
         Learner.temp_instances.remove(temp_inst)
         Learner.temp_values.remove(val)
-        Learner.store(val, inst)
+        Learner.store(val, temp_inst)
         temp += 1
     #else:
       #print("posso tornare senza fare nulla")

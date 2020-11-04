@@ -15,10 +15,11 @@ def client(config, id):
   for value in sys.stdin:
     if (i%100 == 0):
       if(id == 1):
-        print("IDDDDD ", i)
+        # print("IDDDDD ", i)
         s.sendto("startPaxos None None None None".encode(), config["proposers"])
+        print("Client id: ", id ,", I'm asking to the proposers to start the battle.")
       time.sleep(0.5)
-    print("Client id: ", id ,", I'm asking to the proposers to start the battle.")
+    
     
 
     i+=1
@@ -27,6 +28,8 @@ def client(config, id):
     value = "submit " + value + " " + str(id)+ " None None"
     s.sendto(value.encode(), config['proposers'])
   time.sleep(5)
-  if(id == 1):
-    s.sendto("startPaxos None None None None".encode(), config["proposers"])
+  #if(id == 1):
+  s.sendto("startPaxos None None None None".encode(), config["proposers"])
+  print("Client id: ", id ,", I'm asking to the proposers to start the battle.")
+
   print ("Client ",id," my job is done.")

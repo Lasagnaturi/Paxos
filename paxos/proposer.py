@@ -143,51 +143,54 @@ class Proposer():
         Proposer.r = mcast_receiver(config['proposers'])
         Proposer.r.settimeout(5)
         Proposer.s = mcast_sender()
-        if(id == 1):
-            print("Proposer ", id, " hey, I'm the leader")
-            while True:
-                while True:
-                    try:
-                        msg = Proposer.r.recv(2 ** 16)
-                        break
-                    except socket.timeout:
-                        if(len(Proposer.instances.keys())!=0):
-                            instance = max(Proposer.instances.keys())
-                        else:
-                            instance = -1
-                        # print("WEEEE", instance in Proposer.instances.keys())
-                        # print("instance ", instance)
-                        # print("lista", Proposer.instances.keys())
-                        # print("dizio ",Proposer.instances)
-                        # if the waiting is too long, let's start a new round.
-                        if (instance in Proposer.instances.keys()):
-                            if not Proposer.instances[instance]['isComplete']:
 
-                                Proposer.instances[instance]['paxosStarted'] = False
-                                Proposer.instances[instance]['Qa'] = 0
-                                Proposer.instances[instance]['Qa3'] = 0
-                                Proposer.instances[instance]['received3'] = 0
-                                Proposer.instances[instance]['V'] = {}
-                                Proposer.instances[instance]['state2A'] = True
-                                # print("MBAREEEE")
-                                Proposer.startPaxos(instance=instance)
-                            elif(Proposer.values.qsize()>0):
-                                Proposer.startPaxos(instance=Proposer.newStackOfVariables())
-                        # if every instance is complete, let's check if there are pending value, if yes let's start another instance, if no sleep
+        if(id == 2):
+            print("Proposer ",id," sorry, I'm not the leader goodbye.")
+
+        print("Proposer ", id, " hey, I'm the leader")
+        while True:
+            while True:
+                try:
+                    print("proposer aspetto un messaggio")
+                    msg = Proposer.r.recv(2 ** 16)
+                    print("ricevuto")
+                    break
+                except socket.timeout:
+                    print("nessun messaggio ricevuto")
+                    if(len(Proposer.instances.keys())!=0):
+                        instance = max(Proposer.instances.keys())
+                    else:
+                        instance = -1
+
+                    if (instance in Proposer.instances.keys()):
+                        if not Proposer.instances[instance]['isComplete']:
+
+                            Proposer.instances[instance]['paxosStarted'] = False
+                            Proposer.instances[instance]['Qa'] = 0
+                            Proposer.instances[instance]['Qa3'] = 0
+                            Proposer.instances[instance]['received3'] = 0
+                            Proposer.instances[instance]['V'] = {}
+                            Proposer.instances[instance]['state2A'] = True
+                            Proposer.startPaxos(instance=instance)
+                        elif(Proposer.values.qsize()>0):
+                            # Proposer.startPaxos(instance=Proposer.newStackOfVariables())
+                            Proposer.startPaxos(instance='None')
+                    # if every instance is complete, let's check if there are pending value, if yes let's start another instance, if no sleep
+                    else:
+                        print("ATTENZIONE DOVREI ")
+                        if(Proposer.values.qsize()>0):
+                            print('aoo')
+                            Proposer.startPaxos(instance='None')
                         else:
-                            print("ATTENZIONE DOVREI ")
-                            if(Proposer.values.qsize()>0):
-                                print('aoo')
-                                Proposer.startPaxos(instance='None')
-                            else:
-                                print('aiii')
-                                print("Proposer ", id, " sorry, I haven't received values from the client, I'll try again in 5 seconds.")
-                                time.sleep(5)
-                        # print ("Proposer id", id,": OPS! Timeout exception")
-                        # break
-                phase, par1, par2, par3, instance = Proposer.parse_msg(msg)
-                phase(par1, par2, par3, instance)
-        else:
-            print("Proposer ",id," sorry, I'm not the leader")
+                            print('aiii')
+                            print("Proposer ", id, " sorry, I haven't received values from the client, I'll try again in 5 seconds.")
+                            time.sleep(5)
+
+                    # print ("Proposer id", id,": OPS! Timeout exception")
+                    # break
+
+            phase, par1, par2, par3, instance = Proposer.parse_msg(msg)
+            phase(par1, par2, par3, instance)
+        
 
         print("Proposer ", id, " goodbye.")
