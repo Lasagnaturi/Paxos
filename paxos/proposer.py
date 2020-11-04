@@ -46,10 +46,12 @@ class Proposer():
         if(Proposer.instances[instance]['Qa']>1 and Proposer.instances[instance]['state2A']):
             print("Proposer id ",Proposer.id, " instance : ",instance," I received the quorum")
             k = max(Proposer.instances[instance]['V'].keys())
-
+            print("baiocchi ", instance, " k = ",k)
             if (k == 0):
-                print("cerco un valore nella queue")
+                print("cerco un valore nella queue ",instance)
+
                 Proposer.instances[instance]['c_val'] = Proposer.values[0]
+                print("trovo ", instance," il valore", Proposer.instances[instance]['c_val'])
                 #.get(timeout=2)
                 Proposer.values = Proposer.values[1:len(Proposer.values)]
                 print("ottengo un valore dalla queue ")
@@ -72,18 +74,22 @@ class Proposer():
         instance = int(instance)
         v_rnd = int(par1)
         v_val = int(par2)
+
         Proposer.instances[instance]['Qa3'] += 1
 
         if(v_rnd == Proposer.instances[instance]['c_rnd']):
             Proposer.instances[instance]['received3'] += 1
-
+        print("mpa", v_val, " CONDIZIONE2", Proposer.instances[instance]['Qa3'] > 1 and not Proposer.instances[instance]['isComplete'] and Proposer.instances[instance]['Qa3'] == Proposer.instances[instance]['received3'])
         if(Proposer.instances[instance]['Qa3'] > 1 and not Proposer.instances[instance]['isComplete'] and Proposer.instances[instance]['Qa3'] == Proposer.instances[instance]['received3']):
-            msg = "decision " + str(v_val) + " " + str(instance)
-            Proposer.s.sendto(msg.encode(), Proposer.config['learners'])
-
+            
             print ("Proposer id: ",Proposer.id, " instance ", instance, " decided value: ", v_val)
             Proposer.state.append((v_val,instance))
             Proposer.instances[instance]['isComplete'] = True
+
+            msg = "decision " + str(v_val) + " " + str(instance)
+            print( "aioo", str(v_val), " ", msg) 
+            # print("fase 3 ",msg)
+            Proposer.s.sendto(msg.encode(), Proposer.config['learners'])
             # Since the value has been accepted, I start a new instance with the next value to be proposed
            
             Proposer.startPaxos(instance='None')
@@ -153,6 +159,9 @@ class Proposer():
                 break
 
         msg = "decision " + str(val) + " " + str(inst)
+        if(str(val) == 'None'):
+            print("get_older con instanza ",inst)
+            print(Proposer.state)
         Proposer.s.sendto(msg.encode(), Proposer.config['learners'])
 
 

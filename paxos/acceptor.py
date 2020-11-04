@@ -31,6 +31,7 @@ class Acceptor():
 
       Acceptor.instances[instance]['rnd'] = c_rnd
       msg = "phase1b " + str(Acceptor.instances[instance]['rnd']) + " " + str(Acceptor.instances[instance]['v_rnd']) + " " + str(Acceptor.instances[instance]['v_val']) + " " + str(instance)
+      print("RINGO ",instance, "  msg  " , msg)
       Acceptor.s.sendto(msg.encode(), Acceptor.config['proposers'])
     # else The acceptor ignore the request
 
@@ -44,6 +45,7 @@ class Acceptor():
       Acceptor.instances[instance]['v_rnd'] = c_rnd
       Acceptor.instances[instance]['v_val'] = c_val
       msg = "phase2b " + str(Acceptor.instances[instance]['v_rnd'])+ " " + str(Acceptor.instances[instance]['v_val']) + " None " + str(instance)
+      print("phase2bb", str(Acceptor.instances[instance]['v_val']))
       Acceptor.s.sendto(msg.encode(), Acceptor.config['proposers'])
 
   def decision(par1, par2=None, instance=None):

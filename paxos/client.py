@@ -19,7 +19,7 @@ def client(config, id):
         # print("IDDDDD ", i)
       s.sendto("startPaxos None None None None".encode(), config["proposers"])
       print("Client id: ", id ,", I'm asking to the proposers to start the battle.")
-      time.sleep(0.5)
+      time.sleep(0.8)
     i+=1
     value = value.strip()
     print ("client",id, ": sending ", value, " to proposers")
