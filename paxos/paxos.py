@@ -9,6 +9,7 @@ from acceptor import Acceptor
 from connection import mcast_receiver, mcast_sender
 
 
+
 def parse_cfg(cfgpath):
   cfg = {}
   with open(cfgpath, 'r') as cfgfile:
